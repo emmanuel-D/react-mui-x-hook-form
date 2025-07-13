@@ -12,7 +12,7 @@ interface AppColorPickerProps {
 }
 
 // Color Picker Component
-export const AppColorPicker: React.FC<AppColorPickerProps> = ({
+export const ColorPicker: React.FC<AppColorPickerProps> = ({
                                                                   colors,
                                                                   selectedColor,
                                                                   onColorChange

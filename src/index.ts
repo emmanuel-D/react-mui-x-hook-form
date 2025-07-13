@@ -7,7 +7,7 @@ export { RadioGroup } from './components/forms/RadioGroup';
 export { TextArea } from './components/forms/TextArea';
 
 /** Utils components **/
-export { AppColorPicker } from './components/utils/AppColorPicker';
+export { ColorPicker } from './components/utils/ColorPicker';
 export { AutoCompleteSearchModal } from './components/utils/AutoCompleteSearchModal';
 export { AutoCompleteWithMultiSelectSearchModal } from './components/utils/AutoCompleteWithMultiSelectSearchModal';
 export { ConfirmDialog } from './components/utils/ConfirmDialog';
@@ -25,3 +25,10 @@ export { SmallDivider } from './components/dividers/SmallDivider';
 export { DateTimeAgo } from './components/date-time/DateTimeAgo';
 export { ElapsedDuration } from './components/date-time/ElapsedDuration';
 export { TimeAgo } from './components/date-time/TimeAgo';
+
+/** File Upload **/
+export {FileUpload} from './components/file-upload/FileUpload'
+
+/** Hooks **/
+export {useToggle} from './hooks/use-toggle';
+export {useWindowDimensions, getWindowDimensions} from './hooks/use-windows-size';
