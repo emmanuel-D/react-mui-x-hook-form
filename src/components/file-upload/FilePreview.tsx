@@ -9,13 +9,13 @@ const getMediaIcon = (type: MediaUriTypeEnum) => {
     switch (type) {
         case MediaUriTypeEnum.IMAGE:
         case MediaUriTypeEnum.GIF:
-            return <ImageIcon size={20} />;
+            return <ImageIcon size={20}/>;
         case MediaUriTypeEnum.VIDEO:
-            return <Video size={20} />;
+            return <Video size={20}/>;
         case MediaUriTypeEnum.AUDIO:
-            return <Music size={20} />;
+            return <Music size={20}/>;
         default:
-            return <File size={20} />;
+            return <File size={20}/>;
     }
 };
 
@@ -155,6 +155,11 @@ export const FilePreview: React.FC<FilePreviewProps> = ({
                         {duration && (
                             <Typography variant="caption" color="text.secondary">
                                 {FileUtils.formatDuration(duration)}
+                            </Typography>
+                        )}
+                        {file.metadata?.position !== undefined && (
+                            <Typography variant="caption" color="primary">
+                                Position: {file.metadata.position}
                             </Typography>
                         )}
                     </Stack>

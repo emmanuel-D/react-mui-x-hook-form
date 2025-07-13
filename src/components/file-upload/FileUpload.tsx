@@ -12,6 +12,7 @@ interface FileUploadLibraryProps {
     callbacks?: FileUploadCallbacks;
     onFilesChange: (files: FileToUpload[]) => void;
     value?: FileToUpload[];
+    horizontalScroll?: boolean,
 }
 
 /**
@@ -40,7 +41,7 @@ interface FileUploadLibraryProps {
  *     };
  *
  *     return (
- *         <FileUploadLibrary
+ *         <FileUpload
  *             title="Upload Media Files"
  *             config={config}
  *             callbacks={callbacks}
@@ -56,25 +57,31 @@ interface FileUploadLibraryProps {
  * @param callbacks
  * @param onFilesChange
  * @param value
+ * @param horizontalScroll
  * @constructor
  */
 export const FileUpload: React.FC<FileUploadLibraryProps> = ({
-                                                                        title = 'Upload Files',
-                                                                        config,
-                                                                        callbacks = {},
-                                                                        onFilesChange,
-                                                                        value = []
-                                                                    }) => {
+                                                                 title = 'Upload Files',
+                                                                 config,
+                                                                 callbacks = {},
+                                                                 onFilesChange,
+                                                                 value = [],
+                                                                 horizontalScroll = false,
+
+                                                             }) => {
     const [files, setFiles] = useState<FileToUpload[]>(value);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string>('');
-    const [notification, setNotification] = useState<{ message: string; severity: 'success' | 'warning' | 'error' | 'info' }>({
+    const [notification, setNotification] = useState<{
+        message: string;
+        severity: 'success' | 'warning' | 'error' | 'info'
+    }>({
         message: '',
         severity: 'info'
     });
 
     const showNotification = useCallback((message: string, severity: 'success' | 'warning' | 'error' | 'info') => {
-        setNotification({ message, severity });
+        setNotification({message, severity});
     }, []);
 
     const handleDrop = useCallback(async (droppedFiles: File[]) => {
@@ -109,7 +116,18 @@ export const FileUpload: React.FC<FileUploadLibraryProps> = ({
                 }
 
                 try {
-                    const processedFile = await FileUtils.processFile(file);
+                    const position = currentFileCount + i;
+                    const processedFile = await FileUtils.processFile(
+                        file,
+                        config.autoGenerateMetadata ? position : undefined,
+                        config.metadataUseCaseType
+                    );
+
+                    // Generate metadata callback
+                    if (processedFile.metadata) {
+                        callbacks.onMetadataGenerated?.(processedFile, processedFile.metadata);
+                    }
+
                     processedFiles.push(processedFile);
                     callbacks.onProgress?.(((i + 1) / droppedFiles.length) * 100);
                 } catch (error) {
@@ -121,7 +139,13 @@ export const FileUpload: React.FC<FileUploadLibraryProps> = ({
 
             if (processedFiles.length > 0) {
                 const newFiles = [...files, ...processedFiles];
-                setFiles(newFiles);
+
+                // Update positions for all files if auto-generate metadata is enabled
+                const finalFiles = config.autoGenerateMetadata ?
+                    FileUtils.updateFilePositions(newFiles, config.metadataUseCaseType) :
+                    newFiles;
+
+                setFiles(finalFiles);
                 callbacks.onSuccess?.(processedFiles);
                 showNotification(`Successfully added ${processedFiles.length} file(s)`, 'success');
             }
@@ -138,13 +162,18 @@ export const FileUpload: React.FC<FileUploadLibraryProps> = ({
 
     const handleRemoveFile = useCallback((index: number) => {
         const newFiles = files.filter((_, i) => i !== index);
-        setFiles(newFiles);
 
         // Revoke object URL to prevent memory leaks
         URL.revokeObjectURL(files[index].fileUrl);
 
+        // Update positions for remaining files if auto-generate metadata is enabled
+        const finalFiles = config.autoGenerateMetadata ?
+            FileUtils.updateFilePositions(newFiles, config.metadataUseCaseType) :
+            newFiles;
+
+        setFiles(finalFiles);
         showNotification('File removed', 'info');
-    }, [files, showNotification]);
+    }, [files, config, showNotification]);
 
     const handleClearAll = useCallback(() => {
         // Revoke all object URLs
@@ -153,19 +182,35 @@ export const FileUpload: React.FC<FileUploadLibraryProps> = ({
         showNotification('All files cleared', 'info');
     }, [files, showNotification]);
 
+    // Method to manually generate metadata for all files
+    const generateMetadata = useCallback(() => {
+        const filesWithMetadata = FileUtils.generateMetadataForFiles(files, config.metadataUseCaseType);
+        setFiles(filesWithMetadata);
+
+        // Trigger metadata callbacks for all files
+        filesWithMetadata.forEach(file => {
+            if (file.metadata) {
+                callbacks.onMetadataGenerated?.(file, file.metadata);
+            }
+        });
+
+        showNotification('Metadata generated for all files', 'success');
+    }, [files, config.metadataUseCaseType, callbacks, showNotification]);
+
+    // Method to get all files with their metadata
+    const getFilesWithMetadata = useCallback(() => {
+        return files.map(file => ({
+            ...file,
+            metadata: file.metadata || FileUtils.createFileMetadata(file, file.position || 0, config.metadataUseCaseType)
+        }));
+    }, [files, config.metadataUseCaseType]);
+
     useEffect(() => {
         onFilesChange(files);
     }, [files, onFilesChange]);
 
-    // Cleanup URLs on unmount
-    useEffect(() => {
-        return () => {
-            files.forEach(file => URL.revokeObjectURL(file.fileUrl));
-        };
-    }, []);
-
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{width: '100%'}}>
             <Typography variant="h5" gutterBottom>
                 {title}
             </Typography>
@@ -178,44 +223,101 @@ export const FileUpload: React.FC<FileUploadLibraryProps> = ({
             />
 
             {files.length > 0 && (
-                <Box sx={{ mt: 3 }}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                <Box sx={{mt: 3}}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{mb: 2}}>
                         <Typography variant="h6">
                             Selected Files ({files.length}/{config.maxFiles})
                         </Typography>
-                        <Button
-                            variant="outlined"
-                            color="error"
-                            onClick={handleClearAll}
-                            disabled={isProcessing}
-                        >
-                            Clear All
-                        </Button>
+                        <Stack direction="row" spacing={1}>
+                            {!config.autoGenerateMetadata && (
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={generateMetadata}
+                                    disabled={isProcessing}
+                                >
+                                    Generate Metadata
+                                </Button>
+                            )}
+                            <Button
+                                variant="outlined"
+                                color="error"
+                                onClick={handleClearAll}
+                                disabled={isProcessing}
+                            >
+                                Clear All
+                            </Button>
+                        </Stack>
                     </Stack>
 
-                    <Grid container spacing={2}>
-                        {files.map((file, index) => (
-                            <Grid key={index}>
-                                <FilePreview
-                                    file={file}
-                                    index={index}
-                                    onRemove={handleRemoveFile}
-                                    dimensions={config.previewDimensions}
-                                />
+                    {
+                        horizontalScroll ?
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    gap: 2,
+                                    overflowX: 'auto',
+                                    overflowY: 'hidden',
+                                    width: '100%',
+                                    paddingBottom: 1,
+                                    '&::-webkit-scrollbar': {
+                                        height: '8px',
+                                    },
+                                    '&::-webkit-scrollbar-track': {
+                                        backgroundColor: '#f1f1f1',
+                                        borderRadius: '4px',
+                                    },
+                                    '&::-webkit-scrollbar-thumb': {
+                                        backgroundColor: '#c1c1c1',
+                                        borderRadius: '4px',
+                                        '&:hover': {
+                                            backgroundColor: '#a8a8a8',
+                                        },
+                                    },
+                                }}
+                            >
+                                {files.map((file, index) => (
+                                    <Box
+                                        key={index}
+                                        sx={{
+                                            flexShrink: 0,
+                                            minWidth: config.previewDimensions?.width,
+                                        }}
+                                    >
+                                        <FilePreview
+                                            file={file}
+                                            index={index}
+                                            onRemove={handleRemoveFile}
+                                            dimensions={config.previewDimensions}
+                                        />
+                                    </Box>
+                                ))}
+                            </Box>
+                            :
+                            <Grid container spacing={2}>
+                                {files.map((file, index) => (
+                                    <Grid key={index}>
+                                        <FilePreview
+                                            file={file}
+                                            index={index}
+                                            onRemove={handleRemoveFile}
+                                            dimensions={config.previewDimensions}
+                                        />
+                                    </Grid>
+                                ))}
                             </Grid>
-                        ))}
-                    </Grid>
+                    }
                 </Box>
             )}
 
             <Snackbar
                 open={!!notification.message}
                 autoHideDuration={4000}
-                onClose={() => setNotification({ message: '', severity: 'info' })}
+                onClose={() => setNotification({message: '', severity: 'info'})}
             >
                 <Alert
                     severity={notification.severity}
-                    onClose={() => setNotification({ message: '', severity: 'info' })}
+                    onClose={() => setNotification({message: '', severity: 'info'})}
                 >
                     {notification.message}
                 </Alert>
@@ -223,41 +325,6 @@ export const FileUpload: React.FC<FileUploadLibraryProps> = ({
         </Box>
     );
 };
-
-// Example usage:
-/*
-const ExampleUsage = () => {
-    const [uploadedFiles, setUploadedFiles] = useState<FileToUpload[]>([]);
-
-    const config: FileUploadConfig = {
-        maxFiles: 5,
-        maxFileSize: 10 * 1024 * 1024, // 10MB
-        acceptedTypes: {
-            'image/*': ['.jpg', '.jpeg', '.png', '.gif'],
-            'video/*': ['.mp4', '.mov']
-        },
-        enablePreview: true,
-        previewDimensions: { width: 150, height: 200 }
-    };
-
-    const callbacks: FileUploadCallbacks = {
-        onSuccess: (files) => console.log('Files uploaded:', files),
-        onError: (error) => console.error('Upload error:', error),
-        onWarning: (message) => console.warn('Upload warning:', message),
-        onProgress: (progress) => console.log('Progress:', progress + '%')
-    };
-
-    return (
-        <FileUploadLibrary
-            title="Upload Media Files"
-            config={config}
-            callbacks={callbacks}
-            onFilesChange={setUploadedFiles}
-            value={uploadedFiles}
-        />
-    );
-};
-*/
 
 export interface FileMetadataDto<T = any> {
     mediaUriType?: MediaUriTypeEnum;
@@ -279,6 +346,7 @@ export interface FileToUpload {
     duration?: number;
     mediaUriType: MediaUriTypeEnum;
     metadata?: FileMetadataDto;
+    position?: number
 }
 
 export interface FileUploadCallbacks {
@@ -286,6 +354,7 @@ export interface FileUploadCallbacks {
     onError?: (error: string) => void;
     onWarning?: (message: string) => void;
     onProgress?: (progress: number) => void;
+    onMetadataGenerated?: (file: FileToUpload, metadata: FileMetadataDto) => void;
 }
 
 export interface FileUploadConfig {
@@ -295,4 +364,6 @@ export interface FileUploadConfig {
     allowedExtensions?: string[];
     enablePreview?: boolean;
     previewDimensions?: { width: number; height: number };
+    autoGenerateMetadata?: boolean;
+    metadataUseCaseType?: any;
 }

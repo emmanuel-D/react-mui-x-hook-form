@@ -23,7 +23,7 @@ export class FileUtils {
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => {
-                resolve({width: img.width, height: img.height});
+                resolve({ width: img.width, height: img.height });
                 URL.revokeObjectURL(img.src);
             };
             img.onerror = reject;
@@ -59,21 +59,22 @@ export class FileUtils {
         });
     }
 
-    static async processFile(file: File): Promise<FileToUpload> {
+    static async processFile(file: File, position?: number, useCaseType?: any): Promise<FileToUpload> {
         const mediaType = this.getMediaTypeFromFile(file);
         const fileUrl = URL.createObjectURL(file);
 
         const fileToUpload: FileToUpload = {
             file,
             fileUrl,
-            mediaUriType: mediaType
+            mediaUriType: mediaType,
+            position
         };
 
         try {
             switch (mediaType) {
                 case MediaUriTypeEnum.IMAGE:
                 case MediaUriTypeEnum.GIF:
-                    const {width, height} = await this.getImageDimensions(file);
+                    const { width, height } = await this.getImageDimensions(file);
                     fileToUpload.width = width;
                     fileToUpload.height = height;
                     break;
@@ -92,6 +93,11 @@ export class FileUtils {
             }
         } catch (error) {
             console.warn('Error processing file metadata:', error);
+        }
+
+        // Generate metadata if position is provided
+        if (position !== undefined) {
+            fileToUpload.metadata = this.createFileMetadata(fileToUpload, position, useCaseType);
         }
 
         return fileToUpload;
@@ -127,5 +133,29 @@ export class FileUtils {
             mimeType: file.file.type,
             originalName: file.file.name
         };
+    }
+
+    static generateMetadataForFiles<T = any>(
+        files: FileToUpload[],
+        useCaseType?: T
+    ): FileToUpload[] {
+        return files.map((file, index) => ({
+            ...file,
+            position: index,
+            metadata: this.createFileMetadata(file, index, useCaseType)
+        }));
+    }
+
+    static updateFilePositions<T = any>(
+        files: FileToUpload[],
+        useCaseType?: T
+    ): FileToUpload[] {
+        return files.map((file, index) => ({
+            ...file,
+            position: index,
+            metadata: file.metadata ?
+                { ...file.metadata, position: index } :
+                this.createFileMetadata(file, index, useCaseType)
+        }));
     }
 }
