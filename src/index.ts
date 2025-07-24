@@ -5,6 +5,8 @@ export { DatePicker } from './components/forms/DatePicker';
 export { Switch } from './components/forms/Switch';
 export { RadioGroup } from './components/forms/RadioGroup';
 export { TextArea } from './components/forms/TextArea';
+export { SelectDropdown } from './components/forms/SelectDropdown';
+export { MultiSelectDropdown } from './components/forms/MultiSelectDropdown';
 
 /** Utils components **/
 export { ColorPicker } from './components/utils/ColorPicker';
