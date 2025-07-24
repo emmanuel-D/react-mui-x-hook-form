@@ -2,17 +2,17 @@ import * as React from "react";
 import {Controller} from "react-hook-form";
 import {ErrorMessage} from "@hookform/error-message";
 import {Control} from "react-hook-form/dist/types";
-import FormControl from "@mui/material/FormControl";
+import FormControl, {FormControlProps} from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import MuiRadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import {FormHelperText} from "@mui/material";
 
-interface Props {
+interface Props<T> {
     id: string;
     name: string;
-    radioOptions: RadioOption<any>[];
+    radioOptions: RadioOption<T>[];
     required?: boolean;
     type?: React.InputHTMLAttributes<unknown>['type'];
     label: string;
@@ -20,12 +20,13 @@ interface Props {
     control: Control<{ [p: string]: string }, any>;
     rules: any;
     errors: any;
+    formControlProps?: FormControlProps;
 }
 
-export const RadioGroup = (props: Props) => {
+export function RadioGroup<T>(props: Props<T>)  {
 
     return (
-        <FormControl margin={'normal'} fullWidth>
+        <FormControl margin={'normal'} fullWidth {...props.formControlProps}>
             <Controller
                 name={props.name}
                 control={props.control}

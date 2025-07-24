@@ -3,7 +3,7 @@ import {forwardRef, JSX, KeyboardEventHandler} from "react";
 import {Controller} from "react-hook-form";
 import {ErrorMessage} from "@hookform/error-message";
 import {Control} from "react-hook-form/dist/types";
-import FormControl from "@mui/material/FormControl";
+import FormControl, {FormControlProps} from "@mui/material/FormControl";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import {TextFieldProps} from "@mui/material/TextField/TextField";
@@ -26,6 +26,7 @@ interface Props<T> {
     EndIcon?: JSX.Element;
     textFieldProps: TextFieldProps;
     onKeyDown?: KeyboardEventHandler<T> | undefined;
+    formControlProps?: FormControlProps;
 }
 
 export const TextArea = forwardRef((props: Props<any>, ref: React.Ref<any>) => {
@@ -49,7 +50,7 @@ export const TextArea = forwardRef((props: Props<any>, ref: React.Ref<any>) => {
     };
 
     return (
-        <FormControl margin="normal" fullWidth>
+        <FormControl margin="normal" fullWidth {...props.formControlProps}>
             <Controller
                 name={props.name}
                 control={props.control}

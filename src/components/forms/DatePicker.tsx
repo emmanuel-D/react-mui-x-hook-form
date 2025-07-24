@@ -2,7 +2,7 @@ import * as React from "react";
 import {Controller} from "react-hook-form";
 import {ErrorMessage} from "@hookform/error-message";
 import {Control} from "react-hook-form/dist/types";
-import FormControl from "@mui/material/FormControl";
+import FormControl, {FormControlProps} from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
@@ -22,8 +22,9 @@ interface Props {
     control: Control<{ [p: string]: string }, any>;
     rules: any;
     errors: any;
-    Icon: JSX.Element;
+    Icon?: JSX.Element;
     isTimeOnly?: boolean;
+    formControlProps?: FormControlProps;
 }
 
 export const DatePicker = (props: Props) => {
@@ -35,7 +36,7 @@ export const DatePicker = (props: Props) => {
     };
 
     return (
-        <FormControl margin={'normal'} fullWidth>
+        <FormControl margin={'normal'} fullWidth {...props.formControlProps}>
             <Controller
                 name={props.name}
                 control={props.control}

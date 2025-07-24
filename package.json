@@ -62,11 +62,12 @@
   },
   "dependencies": {
     "@hookform/error-message": "^2.0.1",
+    "@manu_omg/lodash-x": "^1.0.5",
     "dayjs": "^1.11.13",
     "lodash.debounce": "^4.0.8",
     "motion": "^12.23.0",
     "react-dropzone": "^14.3.8",
     "react-feather": "^2.0.10"
   },
-  "version": "1.0.3"
+  "version": "1.0.4"
 }

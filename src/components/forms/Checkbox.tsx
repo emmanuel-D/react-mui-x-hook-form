@@ -2,7 +2,7 @@ import * as React from "react";
 import {Controller} from "react-hook-form";
 import {ErrorMessage} from "@hookform/error-message";
 import {Control} from "react-hook-form/dist/types";
-import FormControl from "@mui/material/FormControl";
+import FormControl, {FormControlProps} from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import MuiCheckbox from "@mui/material/Checkbox";
 
@@ -14,12 +14,13 @@ interface Props {
     rules: any;
     errors: any;
     defaultChecked?: boolean;
+    formControlProps?: FormControlProps;
 }
 
 export const Checkbox = (props: Props) => {
 
     return (
-        <FormControl margin={'normal'} fullWidth>
+        <FormControl margin={'normal'} fullWidth {...props.formControlProps}>
             <Controller
                 name={props.name as any}
                 control={props.control as any}

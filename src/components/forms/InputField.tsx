@@ -2,7 +2,7 @@ import * as React from "react";
 import {Controller} from "react-hook-form";
 import {ErrorMessage} from "@hookform/error-message";
 import {Control} from "react-hook-form/dist/types";
-import FormControl from "@mui/material/FormControl";
+import FormControl, {FormControlProps} from "@mui/material/FormControl";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import {TextFieldProps} from "@mui/material/TextField/TextField";
@@ -20,14 +20,15 @@ interface Props {
     errors: any;
     Icon?: JSX.Element;
     EndIcon?: JSX.Element;
-    textFieldProps: TextFieldProps
+    textFieldProps?: TextFieldProps;
+    formControlProps?: FormControlProps;
 }
 
 export const InputField = (props: Props) => {
 
     return (
-        <FormControl margin={'normal'} fullWidth>
-            <Controller
+        <FormControl margin={'normal'} fullWidth {...props.formControlProps}>
+        <Controller
                 name={props.name}
                 control={props.control}
                 rules={props.rules}
