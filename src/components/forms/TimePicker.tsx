@@ -74,9 +74,9 @@ export const TimePicker = ({
                                     variant,
                                     error: !!fieldState.error,
                                     helperText: <ErrorMessage errors={errors} name={name} />,
-                                    InputProps: {
+                                    /*InputProps: {
                                         endAdornment: renderIcon(),
-                                    },
+                                    },*/
                                 },
                             }}
                             {...muiTimePickerProps}

@@ -112,9 +112,9 @@ export const TimeRangePicker = ({
                                             helperText: (
                                                 <ErrorMessage errors={errors} name={startName}/>
                                             ),
-                                            InputProps: {
+                                            /*InputProps: {
                                                 endAdornment: <Clock size={16}/>,
-                                            },
+                                            },*/
                                         },
                                     }}
                                 />
@@ -149,9 +149,9 @@ export const TimeRangePicker = ({
                                             helperText: (
                                                 <ErrorMessage errors={errors} name={endName}/>
                                             ),
-                                            InputProps: {
+                                            /*InputProps: {
                                                 endAdornment: <Clock size={16}/>,
-                                            },
+                                            },*/
                                         },
                                     }}
                                 />

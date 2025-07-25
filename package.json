@@ -36,7 +36,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext .ts,.tsx",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "publish": "npm publish --access public"
   },
   "peerDependencies": {
     "@emotion/react": "^11.0.0",
@@ -69,5 +70,5 @@
     "react-dropzone": "^14.3.8",
     "react-feather": "^2.0.10"
   },
-  "version": "1.0.8"
+  "version": "1.0.9"
 }

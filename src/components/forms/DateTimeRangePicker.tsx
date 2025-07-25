@@ -85,9 +85,9 @@ export const DateTimeRangePicker = ({
                                             helperText: (
                                                 <ErrorMessage errors={errors} name={startName}/>
                                             ),
-                                            InputProps: {
+                                            /*InputProps: {
                                                 endAdornment: <Calendar/>,
-                                            },
+                                            },*/
                                         },
                                     }}
                                 />
@@ -121,9 +121,9 @@ export const DateTimeRangePicker = ({
                                             helperText: (
                                                 <ErrorMessage errors={errors} name={endName}/>
                                             ),
-                                            InputProps: {
+                                            /*InputProps: {
                                                 endAdornment: <Calendar/>,
-                                            },
+                                            },*/
                                         },
                                     }}
                                 />

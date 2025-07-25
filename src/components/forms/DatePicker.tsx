@@ -100,9 +100,9 @@ export const DatePicker = ({
                                     variant,
                                     error: !!fieldState.error,
                                     helperText: <ErrorMessage errors={errors} name={name} />,
-                                    InputProps: {
+                                    /*InputProps: {
                                         endAdornment: renderIcon(),
-                                    },
+                                    },*/
                                 },
                             }}
                             {...muiDatePickerProps}
