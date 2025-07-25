@@ -92,6 +92,7 @@ export const TimeRangePicker = ({
                                 <MuiTimePicker
                                     label={startLabel ?? "Start Time"}
                                     value={startTime}
+                                    defaultValue={startTime}
                                     onChange={(newValue) => {
                                         setStartTime(newValue);
                                         onChange(newValue);
@@ -112,7 +113,7 @@ export const TimeRangePicker = ({
                                                 <ErrorMessage errors={errors} name={startName}/>
                                             ),
                                             InputProps: {
-                                                startAdornment: <Clock size={16}/>,
+                                                endAdornment: <Clock size={16}/>,
                                             },
                                         },
                                     }}
@@ -131,6 +132,7 @@ export const TimeRangePicker = ({
                                 <MuiTimePicker
                                     label={endlabel ?? "End Time"}
                                     value={endTime}
+                                    defaultValue={endTime}
                                     onChange={(newValue) => {
                                         setEndTime(newValue);
                                         onChange(newValue);
@@ -148,7 +150,7 @@ export const TimeRangePicker = ({
                                                 <ErrorMessage errors={errors} name={endName}/>
                                             ),
                                             InputProps: {
-                                                startAdornment: <Clock size={16}/>,
+                                                endAdornment: <Clock size={16}/>,
                                             },
                                         },
                                     }}

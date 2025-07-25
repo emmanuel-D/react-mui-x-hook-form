@@ -95,6 +95,7 @@ export const DateRangePicker = ({
                                 <MuiDatePicker
                                     label={startLabel ?? "Start Date"}
                                     value={startDate}
+                                    defaultValue={startDate}
                                     onChange={(newValue) => {
                                         setStartDate(newValue);
                                         onChange(newValue);
@@ -115,7 +116,7 @@ export const DateRangePicker = ({
                                                 <ErrorMessage errors={errors} name={startName}/>
                                             ),
                                             InputProps: {
-                                                startAdornment: <Calendar size={16}/>,
+                                                endAdornment: <Calendar/>,
                                             },
                                         },
                                     }}
@@ -134,6 +135,7 @@ export const DateRangePicker = ({
                                 <MuiDatePicker
                                     label={endLabel ?? "End Date"}
                                     value={endDate}
+                                    defaultValue={endDate}
                                     onChange={(newValue) => {
                                         setEndDate(newValue);
                                         onChange(newValue);
@@ -151,7 +153,7 @@ export const DateRangePicker = ({
                                                 <ErrorMessage errors={errors} name={endName}/>
                                             ),
                                             InputProps: {
-                                                startAdornment: <Calendar size={16}/>,
+                                                endAdornment: <Calendar/>,
                                             },
                                         },
                                     }}

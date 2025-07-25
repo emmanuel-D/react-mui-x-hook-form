@@ -73,7 +73,7 @@ export const DateTimePicker = ({
         defaultDateTime ? dayjs(defaultDateTime) : null
     );
 
-    const renderIcon = () => Icon || <Calendar size={16} />;
+    const renderIcon = () => Icon || <Calendar/>;
 
     return (
         <FormControl fullWidth margin="normal" {...formControlProps}>
@@ -86,6 +86,7 @@ export const DateTimePicker = ({
                         <MuiDateTimePicker
                             label={label}
                             value={value}
+                            defaultValue={value}
                             onChange={(newValue) => {
                                 setValue(newValue);
                                 onChange(newValue);
@@ -101,7 +102,7 @@ export const DateTimePicker = ({
                                     error: !!fieldState.error,
                                     helperText: <ErrorMessage errors={errors} name={name} />,
                                     InputProps: {
-                                        startAdornment: renderIcon(),
+                                        endAdornment: renderIcon(),
                                     },
                                 },
                             }}

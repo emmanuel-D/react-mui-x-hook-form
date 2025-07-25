@@ -46,7 +46,7 @@ export const TimePicker = ({
         defaultTime ? dayjs(defaultTime) : null
     );
 
-    const renderIcon = () => Icon || <Clock size={16} />;
+    const renderIcon = () => Icon || <Clock />;
 
     return (
         <FormControl fullWidth margin="normal" {...formControlProps}>
@@ -59,6 +59,7 @@ export const TimePicker = ({
                         <MuiTimePicker
                             label={label}
                             value={value}
+                            defaultValue={value}
                             onChange={(newValue) => {
                                 setValue(newValue);
                                 onChange(newValue);
@@ -74,7 +75,7 @@ export const TimePicker = ({
                                     error: !!fieldState.error,
                                     helperText: <ErrorMessage errors={errors} name={name} />,
                                     InputProps: {
-                                        startAdornment: renderIcon(),
+                                        endAdornment: renderIcon(),
                                     },
                                 },
                             }}
