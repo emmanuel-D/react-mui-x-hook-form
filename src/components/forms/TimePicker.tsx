@@ -5,15 +5,16 @@ import { Control } from "react-hook-form";
 import FormControl, { FormControlProps } from "@mui/material/FormControl";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {DatePicker as MuiDatePicker, DatePickerProps} from "@mui/x-date-pickers/DatePicker";
-import { Calendar } from "react-feather";
+import { TimePicker as MuiTimePicker } from "@mui/x-date-pickers/TimePicker";
+import { Clock } from "react-feather";
 import dayjs, { Dayjs } from "dayjs";
-import { APP_DATE_FORMAT } from "../../constants/dates.constant";
+import { APP_TIME_FORMAT } from "../../constants/dates.constant";
+import {TimePickerProps} from "@mui/x-date-pickers/TimePicker/TimePicker.types";
 
 interface Props {
     id: string;
     name: string;
-    defaultDate?: Dayjs | Date | string;
+    defaultTime?: Dayjs | Date | string;
     required?: boolean;
     type?: React.InputHTMLAttributes<unknown>["type"];
     label: string;
@@ -23,40 +24,13 @@ interface Props {
     errors?: any;
     Icon?: React.ReactNode;
     formControlProps?: FormControlProps;
-    muiDatePickerProps?: DatePickerProps;
+    muiTimePickerProps?: TimePickerProps
 }
 
-/**
- * Usage:
- * ```tsx
- * <DatePicker
- *   id="startDate"
- *   name="startDate"
- *   label="Start Date"
- *   control={control}
- *   rules={{ required: "Start date is required" }}
- *   errors={errors}
- * />
- * ```
- * @param id
- * @param name
- * @param defaultDate
- * @param required
- * @param type
- * @param label
- * @param variant
- * @param control
- * @param rules
- * @param errors
- * @param Icon
- * @param formControlProps
- * @param muiDatePickerProps
- * @constructor
- */
-export const DatePicker = ({
+export const TimePicker = ({
                                id,
                                name,
-                               defaultDate,
+                               defaultTime,
                                required,
                                type,
                                label,
@@ -66,13 +40,13 @@ export const DatePicker = ({
                                errors,
                                Icon,
                                formControlProps,
-                               muiDatePickerProps
+                               muiTimePickerProps
                            }: Props) => {
     const [value, setValue] = React.useState<Dayjs | null>(
-        defaultDate ? dayjs(defaultDate) : null
+        defaultTime ? dayjs(defaultTime) : null
     );
 
-    const renderIcon = () => Icon || <Calendar size={16} />;
+    const renderIcon = () => Icon || <Clock size={16} />;
 
     return (
         <FormControl fullWidth margin="normal" {...formControlProps}>
@@ -82,14 +56,14 @@ export const DatePicker = ({
                     control={control}
                     rules={rules}
                     render={({ field: { onChange, ref }, fieldState }) => (
-                        <MuiDatePicker
+                        <MuiTimePicker
                             label={label}
                             value={value}
                             onChange={(newValue) => {
                                 setValue(newValue);
                                 onChange(newValue);
                             }}
-                            format={APP_DATE_FORMAT}
+                            format={APP_TIME_FORMAT}
                             slotProps={{
                                 textField: {
                                     inputRef: ref,
@@ -104,7 +78,7 @@ export const DatePicker = ({
                                     },
                                 },
                             }}
-                            {...muiDatePickerProps}
+                            {...muiTimePickerProps}
                         />
                     )}
                 />
