@@ -17,6 +17,7 @@ export { DateTimeRangePicker } from './components/forms/DateTimeRangePicker';
 export { ColorPicker } from './components/utils/ColorPicker';
 export { AutoCompleteSearchModal } from './components/utils/AutoCompleteSearchModal';
 export { AutoCompleteWithMultiSelectSearchModal } from './components/utils/AutoCompleteWithMultiSelectSearchModal';
+export { Modal } from './components/utils/Modal';
 export { ConfirmDialog } from './components/utils/ConfirmDialog';
 export { MentionAndTagPicker } from './components/utils/MentionAndTagPicker';
 export { NavBar } from './components/utils/NavBar';
