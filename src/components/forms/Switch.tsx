@@ -18,27 +18,27 @@ interface Props {
 }
 
 export const Switch = (props: Props) => {
-
     return (
-        <FormControl margin={'normal'} fullWidth {...props.formControlProps}>
+        <FormControl margin="normal" fullWidth {...props.formControlProps}>
             <Controller
                 name={props.name as any}
                 control={props.control as any}
                 rules={props.rules}
-                render={({field, fieldState}) =>
+                render={({ field, fieldState }) => (
                     <FormControlLabel
                         label={props.label}
                         control={
                             <MuiSwitch
-                                // @ts-ignore
-                                {...field} id={props.id} label={props.label}
-                                defaultChecked={!!props.defaultChecked} error={!!fieldState.error}
-                                helperText={<ErrorMessage errors={props.errors} name={props.name}/>}
+                                id={props.id}
+                                checked={!!field.value} // 👈 controlled by RHF
+                                onChange={(e) => field.onChange(e.target.checked)} // 👈 pass boolean back
                             />
                         }
                     />
-                }
+                )}
             />
+            <ErrorMessage errors={props.errors} name={props.name} />
         </FormControl>
     );
-}
+};
+
